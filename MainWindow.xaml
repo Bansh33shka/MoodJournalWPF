@@ -1,0 +1,462 @@
+<Window x:Class="MoodJournalWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Тихо - дневник настроения"
+        Width="1380" Height="860" MinWidth="1180" MinHeight="720"
+        WindowStartupLocation="CenterScreen"
+        Background="#F7F8FC" FontFamily="Segoe UI">
+    <Window.Resources>
+        <SolidColorBrush x:Key="AccentBrush" Color="#7056D8"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#20243B"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="#868A9E"/>
+        <SolidColorBrush x:Key="OutlineBrush" Color="#EBEDF4"/>
+        <SolidColorBrush x:Key="SoftAccentBrush" Color="#F0EDFC"/>
+
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="22"/>
+            <Setter Property="BorderBrush" Value="{StaticResource OutlineBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="24"/>
+        </Style>
+
+        <Style x:Key="SideNavStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="#AEB3C7"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="18,14"/>
+            <Setter Property="Margin" Value="0,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="NavBorder" Background="{TemplateBinding Background}" CornerRadius="13">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="NavBorder" Property="Background" Value="#30334E"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MoodChoiceStyle" TargetType="Button">
+            <Setter Property="Background" Value="#FBFBFE"/>
+            <Setter Property="BorderBrush" Value="#EAEBF4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="MoodBorder" Background="{TemplateBinding Background}"
+                                CornerRadius="16" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MoodBorder" Property="BorderBrush" Value="#AB9BE9"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActivityStyle" TargetType="Button">
+            <Setter Property="Background" Value="#F6F7FB"/>
+            <Setter Property="Foreground" Value="#575C73"/>
+            <Setter Property="BorderBrush" Value="#E9EBF3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="Margin" Value="0,0,8,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="12">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="24,15"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="13">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="EntryCardTemplate">
+            <Border Background="#FBFBFE" BorderBrush="#ECEEF5" BorderThickness="1"
+                    CornerRadius="14" Padding="15" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="52"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="110"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="42" Height="42" Background="#F0EDFC" CornerRadius="12"
+                            VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding Emoji}" FontFamily="Segoe UI Emoji" FontSize="25"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" Margin="4,0,8,0">
+                        <TextBlock Text="{Binding MoodName}" FontWeight="SemiBold" FontSize="14"
+                                   Foreground="{StaticResource TextBrush}"/>
+                        <TextBlock Text="{Binding CommentText}" FontSize="12" Foreground="#71768C"
+                                   TextTrimming="CharacterEllipsis" Margin="0,5,0,0"/>
+                        <TextBlock Text="{Binding ActivitiesText}" FontSize="11" Foreground="#988FC4"
+                                   TextTrimming="CharacterEllipsis" Margin="0,6,0,0"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Text="{Binding DateText}" FontSize="11"
+                               Foreground="#9A9EB0" HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="242"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#1F2238">
+            <Grid Margin="20,30,20,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="48"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="8,0,0,0">
+                    <Border Width="42" Height="42" Background="#7865E8" CornerRadius="13">
+                        <TextBlock Text="✦" FontSize="24" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="тихо." Foreground="White" FontSize="24" FontWeight="Bold"/>
+                        <TextBlock Text="дневник настроения" Foreground="#9195B2" FontSize="10"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2">
+                    <TextBlock Text="МОЁ ПРОСТРАНСТВО" Foreground="#727791" FontSize="10"
+                               FontWeight="SemiBold" Margin="18,0,0,12"/>
+                    <Button x:Name="DashboardNav" Style="{StaticResource SideNavStyle}"
+                            Background="#383653" Foreground="White" Click="DashboardNav_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="◫" FontSize="19" Width="33"/>
+                            <TextBlock Text="Главная" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="HistoryNav" Style="{StaticResource SideNavStyle}" Click="HistoryNav_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="▤" FontSize="19" Width="33"/>
+                            <TextBlock Text="История записей" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="AnalyticsNav" Style="{StaticResource SideNavStyle}" Click="AnalyticsNav_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="▥" FontSize="19" Width="33"/>
+                            <TextBlock Text="Аналитика" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <Border Grid.Row="4" Background="#2B2D47" CornerRadius="18" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="✧  Маленькое напоминание" Foreground="#C5B8FF"
+                                   FontSize="12" FontWeight="SemiBold"/>
+                        <TextBlock Text="Любое чувство имеет значение. Записывай без оценок и спешки."
+                                   Foreground="#B4B7CD" TextWrapping="Wrap" FontSize="12"
+                                   LineHeight="19" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="White" BorderBrush="#EDEEF5" BorderThickness="0,0,0,1">
+                <Grid Margin="38,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="PageTitle" Text="Моё настроение" FontSize="24"
+                                   Foreground="{StaticResource TextBrush}" FontWeight="Bold"/>
+                        <TextBlock x:Name="PageSubtitle" Text="Побудь немного с собой" FontSize="12"
+                                   Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="#F5F3FC" CornerRadius="14" Padding="17,11"
+                            VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="◷" Foreground="{StaticResource AccentBrush}" FontSize="18"/>
+                            <TextBlock x:Name="TodayText" Foreground="#55516D" FontWeight="SemiBold"
+                                       Margin="9,3,0,0" FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid Margin="38,30,38,34">
+                    <StackPanel x:Name="DashboardView">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="490"/>
+                                <ColumnDefinition Width="22"/>
+                                <ColumnDefinition Width="315"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="КАК ТЫ СЕБЯ ЧУВСТВУЕШЬ?" FontSize="11"
+                                                   Foreground="{StaticResource AccentBrush}" FontWeight="Bold"/>
+                                        <TextBlock Text="Что у тебя внутри сегодня?" Foreground="{StaticResource TextBrush}"
+                                                   FontSize="23" FontWeight="SemiBold" Margin="0,10,0,7"/>
+                                        <TextBlock Text="Выбери настроение, которое ближе всего к твоему состоянию."
+                                                   Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                                   TextWrapping="Wrap"/>
+
+                                        <UniformGrid Columns="5" Margin="0,25,0,22">
+                                            <Button x:Name="Mood1" Tag="1" Style="{StaticResource MoodChoiceStyle}" Click="MoodButton_Click">
+                                                <StackPanel Margin="0,13">
+                                                    <TextBlock Text="😞" FontFamily="Segoe UI Emoji" FontSize="31" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Плохо" FontSize="11" Foreground="#5B6074" Margin="0,9,0,0" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="Mood2" Tag="2" Style="{StaticResource MoodChoiceStyle}" Click="MoodButton_Click">
+                                                <StackPanel Margin="0,13">
+                                                    <TextBlock Text="😕" FontFamily="Segoe UI Emoji" FontSize="31" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Грустно" FontSize="11" Foreground="#5B6074" Margin="0,9,0,0" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="Mood3" Tag="3" Style="{StaticResource MoodChoiceStyle}" Click="MoodButton_Click">
+                                                <StackPanel Margin="0,13">
+                                                    <TextBlock Text="😐" FontFamily="Segoe UI Emoji" FontSize="31" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Обычно" FontSize="11" Foreground="#5B6074" Margin="0,9,0,0" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="Mood4" Tag="4" Style="{StaticResource MoodChoiceStyle}" Click="MoodButton_Click">
+                                                <StackPanel Margin="0,13">
+                                                    <TextBlock Text="🙂" FontFamily="Segoe UI Emoji" FontSize="31" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Хорошо" FontSize="11" Foreground="#5B6074" Margin="0,9,0,0" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button x:Name="Mood5" Tag="5" Style="{StaticResource MoodChoiceStyle}" Click="MoodButton_Click">
+                                                <StackPanel Margin="0,13">
+                                                    <TextBlock Text="🤩" FontFamily="Segoe UI Emoji" FontSize="31" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="Отлично" FontSize="11" Foreground="#5B6074" Margin="0,9,0,0" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </UniformGrid>
+
+                                        <TextBlock Text="Чем был наполнен день?" Foreground="{StaticResource TextBrush}"
+                                                   FontSize="14" FontWeight="SemiBold"/>
+                                        <WrapPanel Margin="0,12,0,14">
+                                            <Button x:Name="ActivityStudy" Content="📚  Учёба" Tag="Учёба"
+                                                    Style="{StaticResource ActivityStyle}" Click="ActivityButton_Click"/>
+                                            <Button x:Name="ActivityWork" Content="💻  Работа" Tag="Работа"
+                                                    Style="{StaticResource ActivityStyle}" Click="ActivityButton_Click"/>
+                                            <Button x:Name="ActivityWalk" Content="🌿  Прогулка" Tag="Прогулка"
+                                                    Style="{StaticResource ActivityStyle}" Click="ActivityButton_Click"/>
+                                            <Button x:Name="ActivityFriends" Content="💬  Общение" Tag="Общение"
+                                                    Style="{StaticResource ActivityStyle}" Click="ActivityButton_Click"/>
+                                            <Button x:Name="ActivitySport" Content="🧘  Спорт" Tag="Спорт"
+                                                    Style="{StaticResource ActivityStyle}" Click="ActivityButton_Click"/>
+                                            <Button x:Name="ActivityRest" Content="☕  Отдых" Tag="Отдых"
+                                                    Style="{StaticResource ActivityStyle}" Click="ActivityButton_Click"/>
+                                        </WrapPanel>
+
+                                        <TextBlock Text="Хочешь оставить заметку?" Foreground="{StaticResource TextBrush}"
+                                                   FontSize="14" FontWeight="SemiBold"/>
+                                        <Border Background="#FAFAFD" BorderBrush="#E9EBF3" BorderThickness="1"
+                                                CornerRadius="12" Margin="0,12,0,0" Padding="12">
+                                            <TextBox x:Name="CommentBox" Height="81" AcceptsReturn="True"
+                                                     TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                                     BorderThickness="0" Background="Transparent" FontSize="13"
+                                                     MaxLength="1000" Foreground="{StaticResource TextBrush}"/>
+                                        </Border>
+                                        <Grid Margin="0,18,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock x:Name="SaveStatusText" Text="Только для тебя ✦"
+                                                       Foreground="{StaticResource MutedBrush}" FontSize="12"
+                                                       VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                            <Button Grid.Column="1" Content="Сохранить запись  ↗"
+                                                    Style="{StaticResource PrimaryButtonStyle}" Click="SaveEntry_Click"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardStyle}" Margin="0,20,0,0">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,17">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="Последние записи" FontSize="18" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource TextBrush}"/>
+                                            <Button Grid.Column="1" Content="Вся история  →" Click="HistoryNav_Click"
+                                                    BorderThickness="0" Background="Transparent" Cursor="Hand"
+                                                    Foreground="{StaticResource AccentBrush}" FontSize="12"/>
+                                        </Grid>
+                                        <ItemsControl x:Name="RecentEntriesList" ItemTemplate="{StaticResource EntryCardTemplate}"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <Border Style="{StaticResource CardStyle}">
+                                    <StackPanel>
+                                        <TextBlock Text="ТВОЯ НЕДЕЛЯ" Foreground="{StaticResource MutedBrush}"
+                                                   FontWeight="SemiBold" FontSize="11"/>
+                                        <TextBlock x:Name="SummaryAvgText" Text="—" FontSize="42" FontWeight="Bold"
+                                                   Foreground="{StaticResource TextBrush}" Margin="0,9,0,0"/>
+                                        <TextBlock Text="Среднее настроение из 5" FontSize="12"
+                                                   Foreground="{StaticResource MutedBrush}"/>
+                                        <Border Height="1" Background="#EEEFF5" Margin="0,20,0,16"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock x:Name="SummaryTotalText" Text="0" FontWeight="Bold" FontSize="21"
+                                                           Foreground="{StaticResource TextBrush}"/>
+                                                <TextBlock Text="записей" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="SummaryBestDayText" Text="—" FontSize="17"
+                                                           FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
+                                                <TextBlock Text="лучший день" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardStyle}" Margin="0,20,0,0">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="Динамика настроения" Foreground="{StaticResource TextBrush}"
+                                                       FontSize="15" FontWeight="SemiBold"/>
+                                            <TextBlock Text="7 дней" Grid.Column="1" FontSize="11"
+                                                       Foreground="{StaticResource MutedBrush}"/>
+                                        </Grid>
+                                        <Canvas x:Name="WeekChartCanvas" Height="190" Margin="0,20,0,0"
+                                                SizeChanged="ChartCanvas_SizeChanged"/>
+                                        <TextBlock Text="Оценка настроения по дням" FontSize="11"
+                                                   Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="#EDE8FC" CornerRadius="22" Padding="23" Margin="0,20,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="✦  Небольшой вывод" FontSize="13" FontWeight="Bold"
+                                                   Foreground="#6852B7"/>
+                                        <TextBlock x:Name="InsightText" Margin="0,12,0,0" TextWrapping="Wrap"
+                                                   Foreground="#555072" LineHeight="21" FontSize="13"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel x:Name="HistoryView" Visibility="Collapsed">
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Твоя история в деталях" FontSize="22" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Text="Здесь собраны все записи, начиная с самой новой."
+                                           Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,7,0,21"/>
+                                <ItemsControl x:Name="AllEntriesList" ItemTemplate="{StaticResource EntryCardTemplate}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel x:Name="AnalyticsView" Visibility="Collapsed">
+                        <UniformGrid Columns="3" Margin="0,0,0,20">
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,13,0">
+                                <StackPanel>
+                                    <TextBlock Text="СРЕДНИЙ БАЛЛ ЗА 7 ДНЕЙ" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBlock x:Name="AnalyticsAvgText" Text="—" FontSize="36" FontWeight="Bold"
+                                               Foreground="{StaticResource TextBrush}" Margin="0,13,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}" Margin="0,0,13,0">
+                                <StackPanel>
+                                    <TextBlock Text="ВСЕГО ЗАПИСЕЙ" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBlock x:Name="AnalyticsCountText" Text="0" FontSize="36" FontWeight="Bold"
+                                               Foreground="{StaticResource TextBrush}" Margin="0,13,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource CardStyle}">
+                                <StackPanel>
+                                    <TextBlock Text="ЧАСТАЯ АКТИВНОСТЬ" FontSize="11" Foreground="{StaticResource MutedBrush}"/>
+                                    <TextBlock x:Name="AnalyticsTopActivityText" Text="—" FontSize="23" FontWeight="Bold"
+                                               Foreground="{StaticResource TextBrush}" Margin="0,18,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+                        <Border Style="{StaticResource CardStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Настроение за последние 7 дней" FontSize="20" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextBrush}"/>
+                                <TextBlock Text="Высота столбца соответствует средней оценке за день."
+                                           FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                                <Canvas x:Name="LargeChartCanvas" Height="280" Margin="0,26,0,4"
+                                        SizeChanged="ChartCanvas_SizeChanged"/>
+                                <TextBlock Text="Шкала от 1 до 5. Пустой столбец означает отсутствие записи."
+                                           HorizontalAlignment="Center" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#EDE8FC" CornerRadius="20" Margin="0,20,0,0" Padding="24">
+                            <StackPanel>
+                                <TextBlock Text="Как читать эту статистику" FontSize="16" FontWeight="SemiBold" Foreground="#5D4B9D"/>
+                                <TextBlock Text="Это обзор твоих отметок, а не медицинская оценка состояния. Обращай внимание на длительные изменения и обстоятельства дня."
+                                           TextWrapping="Wrap" FontSize="13" Foreground="#5D5879" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Text="Демо-версия: записи хранятся только до закрытия приложения"
+                               Foreground="#A0A2B3" FontSize="11" HorizontalAlignment="Center" Margin="0,25,0,0"/>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

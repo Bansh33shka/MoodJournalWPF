@@ -164,7 +164,7 @@
                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="тихо." Foreground="White" FontSize="24" FontWeight="Bold"/>
+                        <TextBlock Text="Monologue" Foreground="White" FontSize="24" FontWeight="Bold"/>
                         <TextBlock Text="дневник настроения" Foreground="#9195B2" FontSize="10"/>
                     </StackPanel>
                 </StackPanel>
@@ -453,8 +453,8 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                    <TextBlock Text="Демо-версия: записи хранятся только до закрытия приложения"
-                               Foreground="#A0A2B3" FontSize="11" HorizontalAlignment="Center" Margin="0,25,0,0"/>
+                    <!--<TextBlock Text="Демо-версия: записи хранятся только до закрытия приложения"
+                               Foreground="#A0A2B3" FontSize="11" HorizontalAlignment="Center" Margin="0,25,0,0"/>-->
                 </Grid>
             </ScrollViewer>
         </Grid>
